@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MobiusCoin Explorer</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">∞</span>
+                <span class="logo-text">MobiusCoin Explorer</span>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Cari blok, transaksi, atau akun...">
+                <button onclick="search()">🔍 Cari</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <button class="nav-btn active" onclick="showPage('dashboard')">📊 Dashboard</button>
+            <button class="nav-btn" onclick="showPage('blocks')">🧱 Blok</button>
+            <button class="nav-btn" onclick="showPage('transactions')">💸 Transaksi</button>
+            <button class="nav-btn" onclick="showPage('accounts')">👤 Akun</button>
+            <button class="nav-btn" onclick="showPage('actions')">⚡ Aksi</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page active">
+            <h1>Dashboard</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🧱</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalBlocks">0</div>
+                        <div class="stat-label">Total Blok</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💸</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalTransactions">0</div>
+                        <div class="stat-label">Total Transaksi</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalAccounts">0</div>
+                        <div class="stat-label">Total Akun</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="avgBlockTime">0s</div>
+                        <div class="stat-label">Rata-rata Blok</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>📈 Status Chain</h3>
+                    <div class="info-content">
+                        <div class="info-row">
+                            <span>Valid:</span>
+                            <span id="chainValid" class="badge badge-success">✓</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Difficulty:</span>
+                            <span id="difficulty">0</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Block Reward:</span>
+                            <span id="blockReward">0</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Latest Block:</span>
+                            <span id="latestBlock">#0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3>🔄 Distribusi Orientasi</h3>
+                    <div class="info-content">
+                        <div class="orientation-chart">
+                            <div class="orientation-bar">
+                                <div class="orientation-positive" id="orientationPositive" style="width: 50%"></div>
+                                <div class="orientation-negative" id="orientationNegative" style="width: 50%"></div>
+                            </div>
+                            <div class="orientation-labels">
+                                <span>Positif (+1): <strong id="positiveCount">0</strong></span>
+                                <span>Negatif (-1): <strong id="negativeCount">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-section">
+                <h3>Blok Terbaru</h3>
+                <div id="recentBlocks" class="blocks-list"></div>
+            </div>
+        </div>
+
+        <!-- Blocks Page -->
+        <div id="blocks" class="page">
+            <h1>🧱 Blok</h1>
+            <div id="blocksList" class="blocks-list"></div>
+            <div class="pagination">
+                <button onclick="loadBlocks(1)">⟨ Sebelumnya</button>
+                <span id="blocksPage">Halaman 1</span>
+                <button onclick="loadBlocks(2)">Selanjutnya ⟩</button>
+            </div>
+        </div>
+
+        <!-- Block Detail -->
+        <div id="blockDetail" class="page">
+            <button class="back-btn" onclick="showPage('blocks')">← Kembali</button>
+            <h1>Detail Blok</h1>
+            <div id="blockDetailContent"></div>
+        </div>
+
+        <!-- Transactions Page -->
+        <div id="transactions" class="page">
+            <h1>💸 Transaksi</h1>
+            <div id="transactionsList" class="transactions-list"></div>
+            <div class="pagination">
+                <button onclick="loadTransactions(1)">⟨ Sebelumnya</button>
+                <span id="transactionsPage">Halaman 1</span>
+                <button onclick="loadTransactions(2)">Selanjutnya ⟩</button>
+            </div>
+        </div>
+
+        <!-- Transaction Detail -->
+        <div id="transactionDetail" class="page">
+            <button class="back-btn" onclick="showPage('transactions')">← Kembali</button>
+            <h1>Detail Transaksi</h1>
+            <div id="transactionDetailContent"></div>
+        </div>
+
+        <!-- Accounts Page -->
+        <div id="accounts" class="page">
+            <h1>👤 Akun</h1>
+            <div id="accountsList" class="accounts-list"></div>
+            <div class="pagination">
+                <button onclick="loadAccounts(1)">⟨ Sebelumnya</button>
+                <span id="accountsPage">Halaman 1</span>
+                <button onclick="loadAccounts(2)">Selanjutnya ⟩</button>
+            </div>
+        </div>
+
+        <!-- Account Detail -->
+        <div id="accountDetail" class="page">
+            <button class="back-btn" onclick="showPage('accounts')">← Kembali</button>
+            <h1>Detail Akun</h1>
+            <div id="accountDetailContent"></div>
+        </div>
+
+        <!-- Actions Page -->
+        <div id="actions" class="page">
+            <h1>⚡ Aksi</h1>
+            
+            <div class="action-grid">
+                <div class="action-card">
+                    <h3>💰 Buat Akun Baru</h3>
+                    <form onsubmit="createAccount(event)">
+                        <div class="form-group">
+                            <label>Alamat:</label>
+                            <input type="text" id="newAccountAddress" placeholder="nama_akun" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Balance Awal:</label>
+                            <input type="number" id="newAccountBalance" placeholder="100.0" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Buat Akun</button>
+                    </form>
+                </div>
+
+                <div class="action-card">
+                    <h3>💸 Transfer Token</h3>
+                    <form onsubmit="transfer(event)">
+                        <div class="form-group">
+                            <label>Dari:</label>
+                            <select id="transferSender" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ke:</label>
+                            <input type="text" id="transferRecipient" placeholder="nama_penerima" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Jumlah:</label>
+                            <input type="number" id="transferAmount" placeholder="10.0" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Transfer</button>
+                    </form>
+                </div>
+
+                <div class="action-card">
+                    <h3>⛏️ Mine Blok Baru</h3>
+                    <form onsubmit="mineBlock(event)">
+                        <p class="info-text">Mine blok baru untuk memproses transaksi pending dan mendapatkan reward.</p>
+                        <button type="submit" class="btn btn-success">Mine Blok</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="searchResults" class="page">
+            <button class="back-btn" onclick="showPage('dashboard')">← Kembali</button>
+            <h1>🔍 Hasil Pencarian</h1>
+            <div id="searchResultsContent"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>MobiusCoin Explorer | Blockchain berbasis Möbius Strip</p>
+            <p>Powered by Python & Flask</p>
+        </div>
+    </footer>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script src="/script.js"></script>
+</body>
+</html>
